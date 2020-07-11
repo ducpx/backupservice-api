@@ -1,0 +1,29 @@
+title: MachinePost
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time
+  name:
+    type: string
+  host_name:
+    type: string
+  ip_address:
+    type: string
+  os_version:
+    type: string
+  agent_version:
+    type: string
+  access_key:
+    type: string
+  secret_key:
+    type: string
+  tenant_id:
+    type: string
+    format: uuid

@@ -1,0 +1,569 @@
+openapi: 3.0.0
+info:
+  title: Public API
+  version: '1.0'
+  description: API cho client tool tương tác
+  contact:
+    name: Tiến Hoàng
+    email: tienhoangvan@vccorp.vn
+servers:
+  - url: 'http://public.vbs.vccloud.vn/v1'
+paths:
+  /agent/backup-directories:
+    get:
+      summary: Lấy danh sách BackupDirectory
+      tags:
+        - BackupDirectory
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/BackupDirectory.v1.yaml
+      operationId: get-backupDirectory
+      description: 'Trả về danh sách các thư mục cần backup '
+    parameters: []
+  '/agent/backup-directories/{backupDirectoryId}':
+    get:
+      summary: Lấy thông tin BackupDirectory
+      tags:
+        - BackupDirectory
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/BackupDirectory.v1.yaml
+        '404':
+          description: Not Found
+      operationId: get-backupDirectories
+      description: Thông tin chi tiết BackupDirectory theo id
+    parameters:
+      - schema:
+          type: string
+        name: backupDirectoryId
+        in: path
+        required: true
+  '/agent/backup-directories/{backupDirectoryId}/policies':
+    parameters:
+      - schema:
+          type: string
+        name: backupDirectoryId
+        in: path
+        required: true
+    get:
+      summary: Lấy thông tin Backup Policy
+      tags:
+        - Backup Policy
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Policy.v1.yaml
+        '404':
+          description: Not Found
+      operationId: get-backupDirectories-id-policy
+  '/agent/backup-directories/{backupDirectoryId}/recovery-points':
+    parameters:
+      - schema:
+          type: string
+        name: backupDirectoryId
+        in: path
+        required: true
+    get:
+      summary: Lấy danh sách Recovery Point
+      tags:
+        - Recovery Point
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/RecoveryPoint.v1.yaml
+        '404':
+          description: Not Found
+      operationId: get-backupDirectories-id-recoveryPoints
+      description: ''
+    post:
+      summary: Tạo mới một recovery-point trước khi thực hiện backup
+      operationId: post-backupDirectories-backupDirectoryId-recoveryPoints
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: ../models/RecoveryPoint.v1.yaml
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      parameters:
+        - schema:
+            type: string
+            enum:
+              - INITIAL_REPLICA
+              - RECOVERY_POINT
+            example: RECOVERY_POINT
+          in: query
+          name: recovery-point-type
+          required: true
+      tags:
+        - Recovery Point
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: |
+          Require policy_id
+
+          Option: name
+
+          ```
+          {
+            "policy_id": "6dd19ea8-a690-4fa0-8935-2b04f3c663ef"
+          }
+          ```
+  '/agent/backup-directories/{backupDirectoryId}/recovery-points/{recoveryPointId}':
+    parameters:
+      - schema:
+          type: integer
+        name: backupDirectoryId
+        in: path
+        description: ''
+        required: true
+      - schema:
+          type: string
+        name: recoveryPointId
+        in: path
+        required: true
+    get:
+      summary: Lấy thông tin Recovery Point
+      tags:
+        - Recovery Point
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/RecoveryPoint.v1.yaml
+              examples: {}
+        '404':
+          description: Not Found
+      operationId: get-recovery-points
+      description: Lấy Recovery Point theo id
+      parameters: []
+    patch:
+      summary: Cập nhật Recovery Point
+      operationId: patch-recovery-points-backupDirectoryId
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/RecoveryPoint.v1.yaml
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      description: 'Cập nhật đã hoàn tất Recovery Point (tức là đã backup xong), chuyển status sang COMPLETED. '
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/RecoveryPoint.v1.yaml
+            examples:
+              example-1:
+                value:
+                  id: 110
+                  status: COMPLETED
+        description: |-
+          Truyền lại object với "status": "COMPLETED". Các trường khác sẽ không được xử lý, nếu "status" != "COMPLETED" sẽ không được chấp nhận.
+          {
+            "id": 110,
+            "status": "COMPLETED"
+          }
+      parameters: []
+      tags:
+        - Recovery Point
+  /agent/files:
+    post:
+      summary: Upload file
+      tags:
+        - File
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: ../models/File.v1.yaml
+        '403':
+          description: Forbidden nếu Recovery Point Session Id không tồn tại hoặc không hợp lệ
+      operationId: post-files
+      description: Upload file qua multipart/form-data
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: name
+          description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: X-Recovery-Point-Session
+          description: Recovery Point Session Id
+          required: true
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+                  format: binary
+              required:
+                - data
+            examples: {}
+        description: Dữ liệu file gửi qua multipart/form-data
+    get:
+      summary: Đọc thông tin file
+      tags:
+        - File
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/File.v1.yaml
+          headers:
+            Location:
+              schema:
+                type: string
+                format: uri
+              description: Link download file
+              required: true
+        '403':
+          description: Forbidden nếu Recovery Point Session Id không tồn tại hoặc không hợp lệ
+        '404':
+          description: Not Found nếu file name không tồn tại
+      operationId: get-files
+      description: 'Đọc thông tin file, không phải để download file (hãy dùng Endpoint /files/download). Link download file đặt trong header'
+      parameters:
+        - schema:
+            type: string
+            format: ''
+          in: query
+          name: name
+          description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: X-Recovery-Point-Session
+          description: Recovery Point Session Id
+          required: true
+    parameters: []
+  '/agent/backup-directories/{backupDirectoryId}/recovery-points/{recoveryPointId}/files':
+    parameters:
+      - schema:
+          type: string
+        name: backupDirectoryId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: recoveryPointId
+        in: path
+        required: true
+    get:
+      summary: Liệt kê danh sách File đã được backup trong Recovery Point
+      tags:
+        - File
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/File.v1.yaml
+        '404':
+          description: Not Found
+      operationId: get-backup-directories-backupDirectoryId-recovery-points-recoveryPointId-files
+      description: Liệt kê danh sách File đã được backup trong Recovery Point
+  /agent/files/download:
+    get:
+      summary: Download Files
+      tags:
+        - File
+      responses:
+        '200':
+          description: OK
+        '403':
+          description: Forbidden nếu Recovery Point Session Id không tồn tại hoặc không hợp lệ
+        '404':
+          description: Not Found nếu file name không tồn tại
+      operationId: get-files-download
+      description: Download file
+      parameters:
+        - schema:
+            type: string
+            format: ''
+          in: query
+          name: name
+          description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: X-Recovery-Point-Session
+          description: Recovery Point Session Id
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Restore-Session-Key
+          required: true
+        - schema:
+            type: string
+          in: header
+          name: X-Session-Created-At
+          required: true
+    parameters: []
+  /agent/files/multipart:
+    post:
+      summary: Khởi tạo multipart session
+      tags:
+        - File
+      responses:
+        '200':
+          description: 'Response 200 khi request gửi kèm uploadId và các part được nối thành công, URL xem thông tin file trả trong header Location'
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Multipart.v1.yaml
+          headers:
+            Location:
+              schema:
+                type: string
+              description: URL xem thông tin file hoàn chỉnh
+              required: true
+        '201':
+          description: Response 201 khi khởi tạo Multipart session (không gửi uploadId). URL để upload part trả trong header Location
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Multipart.v1.yaml
+          headers:
+            Location:
+              schema:
+                type: string
+              description: URL để upload part. Các thao tác PUT part gửi vào đây
+              required: true
+      operationId: post-files-multipart
+      description: |-
+        Khởi tạo multipart session để bắt đầu upload các part.
+        Hoặc Kết thúc multipart để nối các part thành file hoàn chỉnh (gửi kèm param uploadId).
+      parameters:
+        - schema:
+            type: string
+            format: ''
+          in: query
+          name: name
+          description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: X-Recovery-Point-Session
+          description: Recovery Point Session Id
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: upload_id
+          description: 'Multipart upload id, truyền thông tin này khi hoàn tất Multipart'
+    put:
+      summary: Upload part
+      tags:
+        - File
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Part.v1.yaml
+        '403':
+          description: Forbidden
+        '404':
+          description: Not Found
+      operationId: put-files-multipart
+      description: 'Upload part '
+      requestBody:
+        content:
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+              required:
+                - data
+      parameters:
+        - schema:
+            type: string
+            format: ''
+          in: query
+          name: name
+          description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: X-Recovery-Point-Session
+          description: Recovery Point Session Id
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: upload_id
+          required: true
+          description: Multipart upload id
+        - schema:
+            type: integer
+          in: query
+          name: part_number
+          required: true
+          description: Thứ tự part sẽ được dùng khi nối các part thành file hoàn chỉnh
+    get:
+      summary: Đọc thông tin multipart session
+      tags:
+        - File
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Multipart.v1.yaml
+      operationId: get-files-multipart
+      description: Lấy thông tin Multipart session và các Part đã upload
+      parameters:
+        - schema:
+            type: string
+            format: ''
+          in: query
+          name: name
+          description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup
+          required: true
+        - schema:
+            type: string
+            format: uuid
+          in: header
+          name: X-Recovery-Point-Session
+          description: Recovery Point Session Id
+          required: true
+        - schema:
+            type: string
+          in: query
+          name: upload_id
+          required: true
+          description: Multipart upload id
+    parameters: []
+  /agent/register:
+    patch:
+      summary: Update thông tin machine khi start
+      operationId: patch-agent-register
+      responses:
+        '200':
+          description: OK
+      description: Agent update các thông tin của machine
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/MachineRequest.v1.yaml
+        description: ''
+  /agent/config:
+    get:
+      summary: Get config cho machine
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/yaml:
+              schema:
+                type: string
+                description: ''
+              examples: {}
+          headers: {}
+      operationId: get-agent-config
+      description: |-
+        Khi agent start hoặc reconnect sẽ lấy lại thông tin cấu hình về thư mục backup, policies cho các thư mục đó
+
+        return yaml format
+
+        ```
+        backup-directories:
+        - activated: true
+          id: 6dd19ea8-a690-4fa0-8935-2b04f3c663ef
+          name: backup images
+          path: home/ducpx/images
+          policies:
+          - id: a48cfe94-a4f6-4689-9a6d-e94654cda08a
+            name: null
+            schedule_pattern: '***'
+        - activated: false
+          id: dbf88cc0-947d-493f-8cb4-44dfefaa0628
+          name: backup video
+          path: home/ducpx/video
+          policies:
+          - id: c9312fff-457b-4e4b-8703-139c270a53ce
+            name: backup daily
+            schedule_pattern: '***'
+        ```
+components:
+  schemas: {}
+  securitySchemes:
+    API Key:
+      name: Authorization
+      type: apiKey
+      in: header
+      description: "Request phía client gửi thông tin xác thực trong Header Authorization có định dạng: \n\nAuthorization: VBS AccessKey:Signature"
+    Date:
+      name: Date
+      type: apiKey
+      in: header
+      description: Truyền thời gian hiện tại qua tất cả các Request để tính Signature
+security:
+  - API Key: []
+  - Date: []

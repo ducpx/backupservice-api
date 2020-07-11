@@ -1,0 +1,13 @@
+title: MachineRequest
+type: object
+properties:
+  name:
+    type: string
+  host_name:
+    type: string
+  ip_address:
+    type: string
+  os_version:
+    type: string
+  agent_version:
+    type: string

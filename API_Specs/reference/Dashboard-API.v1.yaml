@@ -1,0 +1,735 @@
+openapi: 3.0.0
+info:
+  title: Dashboard API
+  version: '1.0'
+  description: 'API '
+  contact:
+    name: Duc PX
+    email: ducphamxuan@vccorp.vn
+servers:
+  - url: 'http://dashboard.vbs.vccloud.vn/v1'
+paths:
+  /dashboard/machines:
+    get:
+      summary: Lấy tất cả machines của tenant
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/MachineGet.v1.yaml
+              examples:
+                machines:
+                  value:
+                    - agent_version: '0.01'
+                      created_at: 'Wed, 10 Jun 2020 15:14:47 GMT'
+                      'host_name ': mysql-server
+                      id: 743d916d-1362-4328-a1d4-c53ccd1bd625
+                      ip_address: 10.0.0.1
+                      name: mysql
+                      os_version: windows
+                      'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
+                      updated_at: 'Wed, 10 Jun 2020 15:14:47 GMT'
+                    - agent_version: null
+                      created_at: 'Wed, 10 Jun 2020 16:30:56 GMT'
+                      'host_name ': null
+                      id: 3e213039-41c7-4c10-9dc0-1a8dc0bf4823
+                      ip_address: null
+                      name: null
+                      os_version: null
+                      'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
+                      updated_at: 'Wed, 10 Jun 2020 16:30:56 GMT'
+      operationId: get all machines
+    post:
+      summary: Tạo mới một Machine
+      operationId: post-machines
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: ../models/MachinePost.v1.yaml
+              examples:
+                machine-1:
+                  value:
+                    access_key: UBZ6YHKFHWKCADINEGPQ
+                    agent_version: '0.1'
+                    created_at: 'Thu, 11 Jun 2020 09:17:51 GMT'
+                    'host_name ': host name
+                    id: 8d8ead54-0d81-45e2-bd03-0b94cde42cc0
+                    ip_address: 10.10.10.25
+                    name: machine name
+                    os_version: windows 10
+                    secret_key: 19d2b170ae550eb2697ff0b2f0e9aaedcab564080eee8e9c3e335bd749bea621
+                    'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
+                    updated_at: 'Thu, 11 Jun 2020 09:17:51 GMT'
+                machine2:
+                  value:
+                    access_key: UBZ6YHKFHWKCADINEGPQ
+                    agent_version: null
+                    created_at: 'Thu, 11 Jun 2020 09:17:51 GMT'
+                    'host_name ': null
+                    id: 8d8ead54-0d81-45e2-bd03-0b94cde42cc0
+                    ip_address: null
+                    name: null
+                    os_version: null
+                    secret_key: 19d2b170ae550eb2697ff0b2f0e9aaedcab564080eee8e9c3e335bd749bea621
+                    'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
+                    updated_at: 'Thu, 11 Jun 2020 09:17:51 GMT'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/MachineRequest.v1.yaml
+            examples:
+              machine-1:
+                value:
+                  name: machine name
+                  host_name: host name
+                  ip_address: 10.10.10.25
+                  os_version: windows 10
+                  agent_version: '0.1'
+          application/xml:
+            schema:
+              $ref: ../models/Machine.v1.yaml
+        description: Optional
+      parameters: []
+      description: ''
+    parameters: []
+  '/dashboard/machines/{machine_id}':
+    get:
+      summary: Show machine details
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/MachineGet.v1.yaml
+              examples:
+                example-1:
+                  value:
+                    agent_version: '0.01'
+                    created_at: 'Tue, 02 Jun 2020 09:43:15 GMT'
+                    'host_name ': mysql-server
+                    id: 08157574-7428-4494-b1ee-857e1767acdd
+                    ip_address: 10.0.0.1
+                    name: mysql
+                    os_version: windows
+                    'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
+                    updated_at: 'Tue, 02 Jun 2020 09:43:15 GMT'
+      operationId: get-machines-machine_id
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+    patch:
+      summary: Update machine
+      operationId: patch-machines-machine_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/MachineGet.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/MachineRequest.v1.yaml
+            examples:
+              patch-machine:
+                value:
+                  name: Nginx Server
+                  host_name: nginx-1
+                  ip_address: 10.3.35.12
+                  os_version: linux
+                  agent_version: '0.1'
+    delete:
+      summary: Delete machine
+      operationId: delete-machines-machine_id
+      responses:
+        '200':
+          description: OK
+  '/dashboard/machines/{machine_id}/directories':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+    get:
+      summary: Lấy danh sách Backup Directory theo machine_id
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/BackupDirectory.v1.yaml
+      operationId: get-reference-Dashboard-API.v1.yaml-paths-~1machines~1-machine_id-directories
+    post:
+      summary: Tạo một Backup Directory
+      operationId: post-machines-machine_id-directories
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: ../models/BackupDirectory.v1.yaml
+              examples:
+                example-1:
+                  value:
+                    created_at: '2020-06-16T15:14:50.875699'
+                    description: null
+                    id: e0a69ae7-fada-4426-beca-704f67e6d46c
+                    machine_id: e5e0c123-f7f8-425d-bb31-bc514c6e48ef
+                    name: backup web
+                    path: var/www/html
+                    quota: null
+                    size: 0
+                    tenant_id: 98dbba57-60c7-4c22-8087-8313997ea776
+                    updated_at: '2020-06-16T15:1'
+        '400':
+          description: Bad Request
+        '401':
+          description: Unauthorized
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: ../models/BackupDirectoryCreating.v1.yaml
+            examples: {}
+        description: 'request body phải có `path`, path là đường dẫn của thư mục cần backup. Một tên thư mục hợp lệ chỉ chứa các ký tự cho phép: `^[A-Za-z0-9/._-]*$`. Nếu path không hợp lệ thì trả về 400.'
+      description: Tạo một Backup Directory thuộc machine_id
+  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: backup_directory_id
+        in: path
+        required: true
+    get:
+      summary: Lấy thông tin chi tiết của Backup Directory theo id
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/BackupDirectory.v1.yaml
+              examples:
+                example-1:
+                  value:
+                    created_at: '2020-06-16T15:14:50.875699'
+                    description: null
+                    id: e0a69ae7-fada-4426-beca-704f67e6d46c
+                    machine_id: e5e0c123-f7f8-425d-bb31-bc514c6e48ef
+                    name: backup web
+                    path: var/www/html
+                    quota: null
+                    size: 0
+                    tenant_id: 98dbba57-60c7-4c22-8087-8313997ea776
+                    updated_at: '2020-06-16T15:1'
+      operationId: get-machines-machine_id-directories-backup_directory_id
+    patch:
+      summary: Update thông tin của Backup Directory
+      operationId: patch-machines-machine_id-directories-backup_directory_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/BackupDirectory.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: |-
+          Chỉ cho phép update thông tin về tên và thông tin mô tả cho thư mục.
+
+          {
+              "name": "Backup mysql"
+          }
+      description: ''
+    delete:
+      summary: Xóa Backup Directory theo id
+      operationId: delete-machines-machine_id-directories-backup_directory_id
+      responses:
+        '200':
+          description: OK
+        '401':
+          description: Unauthorized
+        '404':
+          description: Not Found
+      description: ''
+  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/policies':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: backup_directory_id
+        in: path
+        required: true
+    get:
+      summary: Lấy danh sách các policy đang apply cho Backup Directory
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Policy.v1.yaml
+              examples:
+                example-1:
+                  value:
+                    - created_at: '2020-06-13T11:48:12.554686'
+                      id: c56b623c-385a-4a9d-834f-7364ffaf00ac
+                      name: full backup
+                      retention_days: null
+                      retention_months: null
+                      retention_weeks: null
+                      schedule_pattern: '* * * *'
+                      tenant_id: 98dbba57-60c7-4c22-8087-8313997ea776
+                      updated_at: '2020-06-16T15:2'
+      operationId: get-machines-machine_id-directories-backup_directory_id-policies
+  /dashboard/backup-directories:
+    get:
+      summary: Lấy danh sách Backup Directory của tenant
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Policy.v1.yaml
+              examples:
+                example-1:
+                  value:
+                    - created_at: '2020-06-16T11:53:36.864994'
+                      description: null
+                      id: 3237174f-9a9b-4304-a72e-4ebdaa15b6a2
+                      machine_id: e5e0c123-f7f8-425d-bb31-bc514c6e48ef
+                      name: backup config
+                      path: etc/nginx
+                      quota: null
+                      size: 0
+                      tenant_id: 98dbba57-60c7-4c22-8087-8313997ea776
+                      updated_at: '2020-06-16T11:5'
+                    - created_at: '2020-06-16T15:14:50.875699'
+                      description: null
+                      id: e0a69ae7-fada-4426-beca-704f67e6d46c
+                      machine_id: e5e0c123-f7f8-425d-bb31-bc514c6e48ef
+                      name: backup web
+                      path: etc/httpd
+                      quota: null
+                      size: 0
+                      tenant_id: 98dbba57-60c7-4c22-8087-8313997ea776
+                      updated_at: '2020-06-16T15:1'
+      operationId: get-backup-directories
+    parameters: []
+  /dashboard/policies:
+    get:
+      summary: Lấy các policy của tenant
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Policy.v1.yaml
+      operationId: get-policies
+    post:
+      summary: Tạo mới một policy
+      operationId: post-policies
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Policy.v1.yaml
+              examples:
+                example-1:
+                  value:
+                    created_at: '2020-06-16T16:06:43.150717'
+                    id: e58f7296-2e56-4fba-b511-3a3af3e006df
+                    name: null
+                    retention_days: null
+                    retention_months: null
+                    retention_weeks: null
+                    schedule_pattern: '* * * * *'
+                    tenant_id: 98dbba57-60c7-4c22-8087-8313997ea776
+                    updated_at: '2020-06-16T16:0'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: |-
+          Hệ thống storage sẽ có một số loại khác nhau. Mỗi policy sẽ được gán vào một loại storage cụ thể (s3, tape). Nếu volume (vùng lưu trữ cho user) của loại storage đó chưa tạo cho user thì sẽ phải tạo mới. Với mỗi loại storage, một user chỉ được cấp duy nhất một volume.
+
+          Request body: bắt buộc phải có `schedule_pattern` (định dạng tương tự crontab) để lập lịch thực hiện backup và `volume_type` để chỉ định loại lưu trữ.
+
+          Các trường trong request body:
+          - name
+          - storage_type: s3
+          - schedule_pattern
+          - retention_days
+          - retention_weeks
+          - retention_months
+
+          {
+            "storage_type": "s3",
+            "name": "backup dayly",
+            "schedule_pattern": "* * * *"
+          }
+    parameters: []
+  '/dashboard/policies/{policy_id}':
+    parameters:
+      - schema:
+          type: string
+        name: policy_id
+        in: path
+        required: true
+    get:
+      summary: Lấy thông tin chi tiết policy
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Policy.v1.yaml
+        '404':
+          description: Not Found
+      operationId: get-policies-policy_id
+    patch:
+      summary: Update thông tin policy
+      operationId: patch-policies-policy_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Policy.v1.yaml
+              examples:
+                example-1:
+                  value:
+                    created_at: '2020-06-16T16:06:43.150717'
+                    id: e58f7296-2e56-4fba-b511-3a3af3e006df
+                    name: backu weeken
+                    retention_days: null
+                    retention_months: null
+                    retention_weeks: null
+                    schedule_pattern: '* * * * *'
+                    tenant_id: 98dbba57-60c7-4c22-8087-8313997ea776
+                    updated_at: '2020-06-16T16:0'
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: |
+          Các thông tin được update:
+          - name
+          - schedule_pattern
+          - retention_days
+          - retention_weeks
+          - retention_months
+
+          ```
+          {
+            "name": "backup weeken"
+          }
+          ```
+    delete:
+      summary: Xóa policy
+      operationId: delete-policies-policy_id
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+    post:
+      summary: Apply/Unapply policy cho backup directory
+      operationId: post-policies-policy_id
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/PolicyBackupDirectories.v1.yaml
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: |-
+          Request body chứa action:
+
+          apply cho backup directory
+          ```
+          {
+            "action": "apply_directory",
+            "directory_id": "e0a69ae7-fada-4426-beca-704f67e6d46c"
+          }
+          ```
+          unapply
+
+          ```
+          {
+            "action": "unapply_directory",
+            "directory_id": "e0a69ae7-fada-4426-beca-704f67e6d46c"
+          }
+          ```
+  '/dashboard/policies/{policy_id}/directories':
+    parameters:
+      - schema:
+          type: string
+        name: policy_id
+        in: path
+        required: true
+    get:
+      summary: Lấy danh sách direcory đang aplly policy id này
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/PolicyBackupDirectories.v1.yaml
+              examples:
+                example-1:
+                  value:
+                    backup-directories:
+                      - e0a69ae7-fada-4426-beca-704f67e6d46c
+                    created_at: '2020-06-13T11:48:12.554686'
+                    id: c56b623c-385a-4a9d-834f-7364ffaf00ac
+                    name: full backup
+                    retention_days: null
+                    retention_months: null
+                    retention_weeks: null
+                    schedule_pattern: '* * * *'
+                    tenant_id: 98dbba57-60c7-4c22-8087-8313997ea776
+                    updated_at: '2020-06-16T16:1'
+      operationId: get-policies-policy_id-directories
+  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/recovery-points':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: backup_directory_id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/RecoveryPoint.v1.yaml
+        '':
+          description: ''
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/RecoveryPoint.v1.yaml
+      operationId: get-machines-machine_id-directories-backup_directory_id-recovery-points
+  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/recovery-points/{recovery-point-id}/files':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: backup_directory_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: recovery-point-id
+        in: path
+        required: true
+    get:
+      summary: Your GET endpoint
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/File.v1.yaml
+      operationId: get-machines-machine_id-directories-backup_directory_id-recovery-points-recovery-point-id-files
+  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/action':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: backup_directory_id
+        in: path
+        required: true
+    post:
+      summary: ''
+      operationId: post-dashboard-machines-machine_id-directories-backup_directory_id-action
+      responses:
+        '200':
+          description: OK
+      description: |-
+        Thực hiện các action cho backup directory:
+        - activate/deactivate
+        - backup manual
+        - restore
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: "Request body gồm có action và directory_id, directory_id phải trùng với backup_directory_id ở URL\n\ncác action bao gồm:\n- activate\n- deactivate\n\n```\n{\n\t\"action\": \"deactivate\",\n}\n```\n\n- backup_manual: Backup manual phai co them storage_type\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n}\n```\n"
+  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/recovery-points/{recovery-point-id}':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: backup_directory_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: recovery-point-id
+        in: path
+        required: true
+    get:
+      summary: Get recovery point detail
+      tags: []
+      responses: {}
+      operationId: get-dashboard-machines-machine_id-directories-backup_directory_id-recovery-points-recovery-point-id
+      description: ''
+  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/recovery-points/{recovery-point-id}/action':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: backup_directory_id
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: recovery-point-id
+        in: path
+        required: true
+    post:
+      summary: Action in recovery point
+      operationId: post-dashboard-machines-machine_id-directories-backup_directory_id-recovery-points-recovery-point-id-action
+      responses:
+        '200':
+          description: OK
+      description: 'Action: restore to directory'
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: |-
+          machine_id là máy đích mà muốn restore vào và path là đường dẫn của thư mục muốn restore
+
+          ```
+          {
+              "machine_id": <id>,
+              "path": "/path/to/directory"
+          }
+          ```
+components:
+  schemas: {}
+  securitySchemes:
+    X-Auth-Token:
+      name: API Key
+      type: apiKey
+      in: header
+      description: Token để xác thực với keystone
+    X-Tenant-Name:
+      name: API Key
+      type: apiKey
+      in: header
+      description: Tenant name trong keystone
+security:
+  - X-Auth-Token: []
+  - X-Tenant-Name: []

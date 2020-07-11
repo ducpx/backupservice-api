@@ -1,0 +1,34 @@
+title: Policy-Directories
+type: object
+description: ''
+x-examples: {}
+properties:
+  id:
+    type: string
+    format: uuid
+  name:
+    type: string
+  schedule_pattern:
+    type: string
+  retention_hours:
+    type: integer
+  retention_days:
+    type: integer
+  retention_weeks:
+    type: integer
+  retention_months:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time
+  tenant_id:
+    type: string
+    format: uuid
+  backup-directories:
+    type: array
+    items:
+      type: string
+      format: uuid

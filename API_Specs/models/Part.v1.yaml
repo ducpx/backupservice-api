@@ -1,0 +1,10 @@
+title: Part
+type: object
+x-tags:
+  - File
+description: ''
+properties:
+  part_number:
+    type: integer
+  etag:
+    type: string

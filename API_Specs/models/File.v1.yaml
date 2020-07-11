@@ -1,0 +1,20 @@
+title: File
+type: object
+properties:
+  id:
+    type: integer
+  name:
+    type: string
+  size:
+    type: integer
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time
+  content_type:
+    type: string
+  eTag:
+    type: string
+description: ''

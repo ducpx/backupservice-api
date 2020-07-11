@@ -1,0 +1,25 @@
+title: BackupDirectory
+type: object
+properties:
+  id:
+    type: string
+    format: uuid
+  name:
+    type: string
+  description:
+    type: string
+  path:
+    type: string
+    example: /var/lib/mysql
+  quota:
+    type: integer
+  size:
+    type: integer
+  machine_id:
+    type: string
+    format: uuid
+  tenant_id:
+    type: string
+    format: uuid
+  activated:
+    type: boolean

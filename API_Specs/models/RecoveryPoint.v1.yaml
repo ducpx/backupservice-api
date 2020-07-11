@@ -1,0 +1,25 @@
+title: RecoveryPoint
+type: object
+properties:
+  id:
+    type: uuid
+  recoveryPointType:
+    type: string
+    enum:
+      - RECOVERY_POINT
+      - INITIAL_REPLICA
+  status:
+    type: string
+    enum:
+      - CREATED
+      - COMPLETED
+      - FAILED
+  session_id:
+    type: string
+    format: uuid
+  created_at:
+    type: string
+    format: date-time
+  updated_at:
+    type: string
+    format: date-time

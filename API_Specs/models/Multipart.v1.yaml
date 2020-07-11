@@ -1,0 +1,13 @@
+title: Multipart
+type: object
+x-tags:
+  - File
+properties:
+  upload_id:
+    type: string
+  file_name:
+    type: string
+  parts:
+    type: array
+    items:
+      $ref: ./Part.v1.yaml
