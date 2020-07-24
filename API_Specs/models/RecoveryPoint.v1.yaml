@@ -14,9 +14,6 @@ properties:
       - CREATED
       - COMPLETED
       - FAILED
-  session_id:
-    type: string
-    format: uuid
   created_at:
     type: string
     format: date-time

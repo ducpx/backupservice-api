@@ -134,6 +134,7 @@ paths:
 
           ```
           {
+            "name": "2020-15-07",
             "policy_id": "6dd19ea8-a690-4fa0-8935-2b04f3c663ef"
           }
           ```
@@ -230,7 +231,7 @@ paths:
             type: string
             format: uuid
           in: header
-          name: X-Recovery-Point-Session
+          name: X-Recovery-Point-Id
           description: Recovery Point Session Id
           required: true
       requestBody:
@@ -282,7 +283,7 @@ paths:
             type: string
             format: uuid
           in: header
-          name: X-Recovery-Point-Session
+          name: X-Recovery-Point-Id
           description: Recovery Point Session Id
           required: true
     parameters: []
@@ -341,7 +342,7 @@ paths:
             type: string
             format: uuid
           in: header
-          name: X-Recovery-Point-Session
+          name: X-Recovery-Point-Id
           description: Recovery Point Session Id
           required: true
         - schema:
@@ -401,7 +402,7 @@ paths:
             type: string
             format: uuid
           in: header
-          name: X-Recovery-Point-Session
+          name: X-Recovery-Point-Id
           description: Recovery Point Session Id
           required: true
         - schema:
@@ -448,7 +449,7 @@ paths:
             type: string
             format: uuid
           in: header
-          name: X-Recovery-Point-Session
+          name: X-Recovery-Point-Id
           description: Recovery Point Session Id
           required: true
         - schema:
@@ -488,7 +489,7 @@ paths:
             type: string
             format: uuid
           in: header
-          name: X-Recovery-Point-Session
+          name: X-Recovery-Point-Id
           description: Recovery Point Session Id
           required: true
         - schema:
