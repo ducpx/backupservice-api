@@ -551,6 +551,47 @@ paths:
             name: backup daily
             schedule_pattern: '***'
         ```
+  '/agent/backup-directories/{backupDirectoryId}/action':
+    parameters:
+      - schema:
+          type: string
+        name: backupDirectoryId
+        in: path
+        required: true
+    post:
+      summary: Action backup manual
+      operationId: post-agent-backup-directories-backupDirectoryId-action
+      responses:
+        '200':
+          description: OK
+      description: "Request body gồm có action: backup_manual và storage_type\n\nstorage_type: S3 hoặc TAPE\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n}\n```"
+  '/agent/backup-directories/{backupDirectoryId}/recovery-points/{recoveryPointId}/action':
+    parameters:
+      - schema:
+          type: string
+        name: backupDirectoryId
+        in: path
+        required: true
+      - schema:
+          type: string
+        name: recoveryPointId
+        in: path
+        required: true
+    post:
+      summary: 'Action in recovery point: restore'
+      operationId: post-agent-backup-directories-backupDirectoryId-recovery-points-recoveryPointId-action
+      responses:
+        '200':
+          description: OK
+      description: |-
+        machine_id là máy đích mà muốn restore vào và path là đường dẫn của thư mục muốn restore
+
+        ```
+        {
+            "machine_id": <id>,
+            "path": "/path/to/directory"
+        }
+        ```
 components:
   schemas: {}
   securitySchemes:
