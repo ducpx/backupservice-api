@@ -1,0 +1,14 @@
+title: state_action
+type: object
+properties:
+  id:
+    type: string
+  action:
+    type: string
+    enum:
+      - BACKUP
+      - RESTORE
+  status:
+    type: string
+  recovery_point:
+    $ref: ./RecoveryPoint.v1.yaml

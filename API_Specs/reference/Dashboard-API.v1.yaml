@@ -654,7 +654,7 @@ paths:
             schema:
               type: object
               properties: {}
-        description: "Request body gồm có action và directory_id, directory_id phải trùng với backup_directory_id ở URL\n\ncác action bao gồm:\n- activate\n- deactivate\n\n```\n{\n\t\"action\": \"deactivate\",\n}\n```\n\n- backup_manual: Backup manual phai co them storage_type\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n}\n```\n"
+        description: "Request body gồm có action\ncác action bao gồm:\n- activate\n- deactivate\n\n```\n{\n\t\"action\": \"deactivate\",\n}\n```\n\n- backup_manual: Backup manual phai co them storage_type\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n}\n```\n"
   '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/recovery-points/{recovery-point-id}':
     parameters:
       - schema:
