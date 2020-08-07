@@ -335,7 +335,7 @@ paths:
             format: ''
           in: query
           name: name
-          description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup
+          description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup. Hiện tại chỉ support download cả file zip của thư mục. Tên file recovery-point-id.zip
           required: true
         - schema:
             type: string
