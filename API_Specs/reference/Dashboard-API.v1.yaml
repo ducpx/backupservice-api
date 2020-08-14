@@ -494,40 +494,6 @@ paths:
           description: OK
         '404':
           description: Not Found
-    post:
-      summary: Apply/Unapply policy cho backup directory
-      operationId: post-policies-policy_id
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ../models/PolicyBackupDirectories.v1.yaml
-      requestBody:
-        content:
-          application/json:
-            schema:
-              type: object
-              properties: {}
-        description: |-
-          Request body chứa action:
-
-          apply cho backup directory
-          ```
-          {
-            "action": "apply_directory",
-            "directory_id": "e0a69ae7-fada-4426-beca-704f67e6d46c"
-          }
-          ```
-          unapply
-
-          ```
-          {
-            "action": "unapply_directory",
-            "directory_id": "e0a69ae7-fada-4426-beca-704f67e6d46c"
-          }
-          ```
   '/dashboard/policies/{policy_id}/directories':
     parameters:
       - schema:
@@ -715,6 +681,43 @@ paths:
           {
               "machine_id": <id>,
               "path": "/path/to/directory"
+          }
+          ```
+  '/dashboard/policies/{policy_id}/action':
+    parameters:
+      - schema:
+          type: string
+        name: policy_id
+        in: path
+        required: true
+    post:
+      summary: Apply/Unapply policy cho backup directory
+      operationId: post-dashboard-policies-policy_id-action
+      responses:
+        '200':
+          description: OK
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+        description: |-
+          Request body chứa action:
+
+          apply cho backup directory
+          ```
+          {
+            "action": "apply_directory",
+            "directory_id": "e0a69ae7-fada-4426-beca-704f67e6d46c"
+          }
+          ```
+          unapply
+
+          ```
+          {
+            "action": "unapply_directory",
+            "directory_id": "e0a69ae7-fada-4426-beca-704f67e6d46c"
           }
           ```
 components:
