@@ -13,5 +13,7 @@ properties:
     type: string
   os_machine_id:
     type: string
-required:
-  - os_machine_id
+    description: Not require from dashboard
+  encryption:
+    type: boolean
+    description: Not include when update machine

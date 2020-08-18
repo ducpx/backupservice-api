@@ -66,6 +66,8 @@ paths:
                     name: machine name
                     os_version: windows 10
                     secret_key: 19d2b170ae550eb2697ff0b2f0e9aaedcab564080eee8e9c3e335bd749bea621
+                    os_machine_id: null
+                    encryption: false
                     'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
                     updated_at: 'Thu, 11 Jun 2020 09:17:51 GMT'
                 machine2:
@@ -79,6 +81,8 @@ paths:
                     name: null
                     os_version: null
                     secret_key: 19d2b170ae550eb2697ff0b2f0e9aaedcab564080eee8e9c3e335bd749bea621
+                    os_machine_id: null
+                    encryption: false
                     'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
                     updated_at: 'Thu, 11 Jun 2020 09:17:51 GMT'
       requestBody:
@@ -611,7 +615,7 @@ paths:
           description: OK
       description: |-
         Thực hiện các action cho backup directory:
-        - activate/deactivate
+        - active/deactive
         - backup manual
         - restore
       requestBody:
@@ -620,7 +624,7 @@ paths:
             schema:
               type: object
               properties: {}
-        description: "Request body gồm có action\ncác action bao gồm:\n- activate\n- deactivate\n\n```\n{\n\t\"action\": \"deactivate\",\n}\n```\n\n- backup_manual: Backup manual phai co them storage_type\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n}\n```\n"
+        description: "Request body gồm có action\ncác action bao gồm:\n- active\n- deactive\n\n```\n{\n\t\"action\": \"deactive\",\n}\n```\n\n- backup_manual: Backup manual phai co them storage_type\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n}\n```\n"
   '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/recovery-points/{recovery-point-id}':
     parameters:
       - schema:
@@ -720,6 +724,104 @@ paths:
             "directory_id": "e0a69ae7-fada-4426-beca-704f67e6d46c"
           }
           ```
+  '/dashboard/machines/{machine_id}/directories/action':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+    post:
+      summary: Active/Deactive nhiều directories đồng thời
+      operationId: post-dashboard-machines-machine_id-directories-action
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+              examples:
+                active-1:
+                  value:
+                    message: Active multiple backup directory success
+                active-2:
+                  value:
+                    message: Not have directory to active
+                deactive-1:
+                  value:
+                    message: Deactive multiple backup directory success
+                deactive-2:
+                  value:
+                    message: Not have directory to deactive
+        '400':
+          description: Bad Request
+      description: Active/Deactive nhiều directories đồng thời
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  enum:
+                    - active
+                    - deactive
+                  example: active
+                backup_directories:
+                  type: array
+                  description: List id backup-directories not empty
+                  items:
+                    type: string
+                    format: uuid
+              required:
+                - action
+                - backup_directories
+            examples:
+              active:
+                value:
+                  action: active
+                  backup_directories:
+                    - 3d08f398-47e8-417b-bf7d-47a62f00f2fa
+                    - ad8d199f-c7e8-4ec7-b060-e813da36e32c
+              deactive:
+                value:
+                  action: deactive
+                  backup_directories:
+                    - 3d08f398-47e8-417b-bf7d-47a62f00f2fa
+                    - ad8d199f-c7e8-4ec7-b060-e813da36e32c
+    delete:
+      summary: Delete nhiều directories đồng thời
+      operationId: delete-dashboard-machines-machine_id-directories-action
+      responses:
+        '200':
+          description: OK
+        '400':
+          description: Bad Request
+        '404':
+          description: Not Found
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                action:
+                  type: string
+                  description: delete
+                backup_directories:
+                  type: array
+                  description: List id backup-directories not empty
+                  items:
+                    type: string
+                    format: uuid
+              required:
+                - action
+                - backup_directories
 components:
   schemas: {}
   securitySchemes:

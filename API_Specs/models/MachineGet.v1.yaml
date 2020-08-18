@@ -24,3 +24,7 @@ properties:
   tenant_id:
     type: string
     format: uuid
+  os_machine_id:
+    type: string
+  encryption:
+    type: string

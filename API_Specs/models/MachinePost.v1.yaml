@@ -27,3 +27,6 @@ properties:
   tenant_id:
     type: string
     format: uuid
+  encryption:
+    type: boolean
+    default: 'false'
