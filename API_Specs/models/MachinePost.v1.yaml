@@ -30,3 +30,16 @@ properties:
   encryption:
     type: boolean
     default: 'false'
+  file_content:
+    type: object
+    properties:
+      machine_id:
+        type: string
+      access_key:
+        type: string
+      secret_key:
+        type: string
+      broker_url:
+        type: string
+      api_url:
+        type: string

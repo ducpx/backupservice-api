@@ -10,13 +10,7 @@ properties:
     type: string
   schedule_pattern:
     type: string
-  retention_hours:
-    type: integer
   retention_days:
-    type: integer
-  retention_weeks:
-    type: integer
-  retention_months:
     type: integer
   created_at:
     type: string
@@ -27,3 +21,5 @@ properties:
   tenant_id:
     type: string
     format: uuid
+  description:
+    type: string

@@ -22,9 +22,3 @@ properties:
     format: date-time
   name:
     type: string
-  backup_directory_id:
-    type: string
-    format: uuid
-  policy_id:
-    type: string
-    format: uuid

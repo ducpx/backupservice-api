@@ -7,12 +7,11 @@ info:
     name: Duc PX
     email: ducphamxuan@vccorp.vn
 servers:
-  - url: 'http://dashboard.vbs.vccloud.vn/v1'
+  - url: 'https://dev.bizflycloud.vn/api/cloud-backup'
 paths:
   /dashboard/machines:
     get:
       summary: Lấy tất cả machines của tenant
-      tags: []
       responses:
         '200':
           description: OK
@@ -44,6 +43,8 @@ paths:
                       'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
                       updated_at: 'Wed, 10 Jun 2020 16:30:56 GMT'
       operationId: get all machines
+      tags:
+        - Machines
     post:
       summary: Tạo mới một Machine
       operationId: post-machines
@@ -70,6 +71,12 @@ paths:
                     encryption: false
                     'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
                     updated_at: 'Thu, 11 Jun 2020 09:17:51 GMT'
+                    file_content:
+                      access_key: RZVA6JIAF7JNH3KENRFE
+                      api_url: config
+                      broker_url: config
+                      machine_id: 96eb548c-42b3-4fe9-a873-8658769dc293
+                      secret_key: b57b476c1ef401cfb90e598580efea9c33b37a2ee6f765e9bddf5aa395461387
                 machine2:
                   value:
                     access_key: UBZ6YHKFHWKCADINEGPQ
@@ -104,11 +111,12 @@ paths:
         description: Optional
       parameters: []
       description: ''
+      tags:
+        - Machines
     parameters: []
   '/dashboard/machines/{machine_id}':
     get:
       summary: Show machine details
-      tags: []
       responses:
         '200':
           description: OK
@@ -129,6 +137,8 @@ paths:
                     'tenant_id ': 98dbba57-60c7-4c22-8087-8313997ea776
                     updated_at: 'Tue, 02 Jun 2020 09:43:15 GMT'
       operationId: get-machines-machine_id
+      tags:
+        - Machines
     parameters:
       - schema:
           type: string
@@ -158,12 +168,30 @@ paths:
                   ip_address: 10.3.35.12
                   os_version: linux
                   agent_version: '0.1'
+      tags:
+        - Machines
     delete:
-      summary: Delete machine
+      summary: Xóa machine
       operationId: delete-machines-machine_id
       responses:
         '200':
           description: OK
+      description: "Xóa Machine có 2 option:\n- Xóa Machine kèm theo xóa toàn bộ data của machine (default)\n- Xóa Machine nhưng giữ lại data. User sẽ phải xóa những data này bằng tay trên dashboard\n\nRequest body to delete directory:\n```\n{\n\t\"keep\": True/False\n\t\"directory_ids\": [list directory id]\n}\n```\n\nKeep: True cho phép giữ lại các bản data, False sẽ xóa hết data\nnếu Keep True thì truyền thêm danh sách directory được giữ lại data"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                directory_ids:
+                  type: array
+                  items:
+                    type: string
+                    format: uuid
+              required:
+                - directory_ids
+      tags:
+        - Machines
   '/dashboard/machines/{machine_id}/directories':
     parameters:
       - schema:
@@ -173,7 +201,8 @@ paths:
         required: true
     get:
       summary: Lấy danh sách Backup Directory theo machine_id
-      tags: []
+      tags:
+        - BackupDirectory
       responses:
         '200':
           description: OK
@@ -219,6 +248,8 @@ paths:
             examples: {}
         description: 'request body phải có `path`, path là đường dẫn của thư mục cần backup. Một tên thư mục hợp lệ chỉ chứa các ký tự cho phép: `^[A-Za-z0-9/._-]*$`. Nếu path không hợp lệ thì trả về 400.'
       description: Tạo một Backup Directory thuộc machine_id
+      tags:
+        - BackupDirectory
   '/dashboard/machines/{machine_id}/directories/{backup_directory_id}':
     parameters:
       - schema:
@@ -233,7 +264,8 @@ paths:
         required: true
     get:
       summary: Lấy thông tin chi tiết của Backup Directory theo id
-      tags: []
+      tags:
+        - BackupDirectory
       responses:
         '200':
           description: OK
@@ -270,14 +302,31 @@ paths:
           application/json:
             schema:
               type: object
-              properties: {}
+              properties:
+                name:
+                  type: string
+                description:
+                  type: string
+                policies:
+                  type: array
+                  description: list policy id to apply to directory
+                  items:
+                    type: string
+                    format: uuid
         description: |-
-          Chỉ cho phép update thông tin về tên và thông tin mô tả cho thư mục.
+          Cho phép update thông tin về tên, thông tin mô tả, thêm/bỏ policies cho thư mục.
+          policies là danh sách id của policies sẽ được apply cho thư mục sau khi update
 
+          nếu không truyền policies tương đương với policies truyền list rỗng, khi đó các policies đang apply sẽ bị unapply toàn bộ
+
+          ```
           {
               "name": "Backup mysql"
           }
+          ```
       description: ''
+      tags:
+        - BackupDirectory
     delete:
       summary: Xóa Backup Directory theo id
       operationId: delete-machines-machine_id-directories-backup_directory_id
@@ -288,7 +337,19 @@ paths:
           description: Unauthorized
         '404':
           description: Not Found
-      description: ''
+      description: "Xóa Backup Directory có 2 option:\n- Xóa Backup Directory kèm theo xóa toàn bộ data của directory (default)\n- Xóa Backup Directory nhưng giữ lại data. User sẽ phải xóa những data này bằng tay trên dashboard\n\nRequest body to delete directory:\n```\n{\n\t\"keep\": True/False\n}\n```\n\nKeep: True cho phép giữ lại các bản data, False sẽ xóa hết data\n"
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                keep:
+                  type: boolean
+              required:
+                - keep
+      tags:
+        - BackupDirectory
   '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/policies':
     parameters:
       - schema:
@@ -303,7 +364,8 @@ paths:
         required: true
     get:
       summary: Lấy danh sách các policy đang apply cho Backup Directory
-      tags: []
+      tags:
+        - Backup Policy
       responses:
         '200':
           description: OK
@@ -329,7 +391,8 @@ paths:
   /dashboard/backup-directories:
     get:
       summary: Lấy danh sách Backup Directory của tenant
-      tags: []
+      tags:
+        - BackupDirectory
       responses:
         '200':
           description: OK
@@ -367,7 +430,8 @@ paths:
   /dashboard/policies:
     get:
       summary: Lấy các policy của tenant
-      tags: []
+      tags:
+        - Backup Policy
       responses:
         '200':
           description: OK
@@ -394,9 +458,7 @@ paths:
                     created_at: '2020-06-16T16:06:43.150717'
                     id: e58f7296-2e56-4fba-b511-3a3af3e006df
                     name: null
-                    retention_days: null
-                    retention_months: null
-                    retention_weeks: null
+                    retention_days: 7
                     schedule_pattern: '* * * * *'
                     tenant_id: 98dbba57-60c7-4c22-8087-8313997ea776
                     updated_at: '2020-06-16T16:0'
@@ -406,6 +468,7 @@ paths:
             schema:
               type: object
               properties: {}
+            examples: {}
         description: |-
           Hệ thống storage sẽ có một số loại khác nhau. Mỗi policy sẽ được gán vào một loại storage cụ thể (s3, tape). Nếu volume (vùng lưu trữ cho user) của loại storage đó chưa tạo cho user thì sẽ phải tạo mới. Với mỗi loại storage, một user chỉ được cấp duy nhất một volume.
 
@@ -413,17 +476,18 @@ paths:
 
           Các trường trong request body:
           - name
-          - storage_type: s3
+          - storage_type: S3
           - schedule_pattern
           - retention_days
-          - retention_weeks
-          - retention_months
+          - description
 
           {
-            "storage_type": "s3",
+            "storage_type": "S3",
             "name": "backup dayly",
             "schedule_pattern": "* * * *"
           }
+      tags:
+        - Backup Policy
     parameters: []
   '/dashboard/policies/{policy_id}':
     parameters:
@@ -434,7 +498,8 @@ paths:
         required: true
     get:
       summary: Lấy thông tin chi tiết policy
-      tags: []
+      tags:
+        - Backup Policy
       responses:
         '200':
           description: OK
@@ -490,6 +555,8 @@ paths:
             "name": "backup weeken"
           }
           ```
+      tags:
+        - Backup Policy
     delete:
       summary: Xóa policy
       operationId: delete-policies-policy_id
@@ -498,6 +565,12 @@ paths:
           description: OK
         '404':
           description: Not Found
+      description: |
+        Policy chỉ được xóa khi:
+          - Không được apply vào directory
+          - Không có Recovery Point được tạo bởi policy
+      tags:
+        - Backup Policy
   '/dashboard/policies/{policy_id}/directories':
     parameters:
       - schema:
@@ -507,7 +580,8 @@ paths:
         required: true
     get:
       summary: Lấy danh sách direcory đang aplly policy id này
-      tags: []
+      tags:
+        - Backup Policy
       responses:
         '200':
           description: OK
@@ -545,8 +619,9 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
-      tags: []
+      summary: Lấy danh sách Recovery Point của 1 directory
+      tags:
+        - Recovery Point
       responses:
         '200':
           description: OK
@@ -583,8 +658,9 @@ paths:
         in: path
         required: true
     get:
-      summary: Your GET endpoint
-      tags: []
+      summary: Lấy danh sách Files của 1 Recovery Point
+      tags:
+        - Recovery Point
       responses:
         '200':
           description: OK
@@ -608,7 +684,7 @@ paths:
         in: path
         required: true
     post:
-      summary: ''
+      summary: active/deactive backup directory
       operationId: post-dashboard-machines-machine_id-directories-backup_directory_id-action
       responses:
         '200':
@@ -617,49 +693,17 @@ paths:
         Thực hiện các action cho backup directory:
         - active/deactive
         - backup manual
-        - restore
       requestBody:
         content:
           application/json:
             schema:
               type: object
               properties: {}
-        description: "Request body gồm có action\ncác action bao gồm:\n- active\n- deactive\n\n```\n{\n\t\"action\": \"deactive\",\n}\n```\n\n- backup_manual: Backup manual phai co them storage_type\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n}\n```\n"
-  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/recovery-points/{recovery-point-id}':
+        description: "Request body gồm có action\ncác action bao gồm:\n- active\n- deactive\n\n```\n{\n\t\"action\": \"deactive\",\n}\n```\n\n- backup_manual: Backup manual phai co them storage_type\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\"\n}\n```\n"
+      tags:
+        - BackupDirectory
+  '/dashboard/recovery-points/{recovery-point-id}/action':
     parameters:
-      - schema:
-          type: string
-        name: machine_id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: backup_directory_id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: recovery-point-id
-        in: path
-        required: true
-    get:
-      summary: Get recovery point detail
-      tags: []
-      responses: {}
-      operationId: get-dashboard-machines-machine_id-directories-backup_directory_id-recovery-points-recovery-point-id
-      description: ''
-  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/recovery-points/{recovery-point-id}/action':
-    parameters:
-      - schema:
-          type: string
-        name: machine_id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: backup_directory_id
-        in: path
-        required: true
       - schema:
           type: string
         name: recovery-point-id
@@ -687,6 +731,8 @@ paths:
               "path": "/path/to/directory"
           }
           ```
+      tags:
+        - Recovery Point
   '/dashboard/policies/{policy_id}/action':
     parameters:
       - schema:
@@ -724,6 +770,8 @@ paths:
             "directory_id": "e0a69ae7-fada-4426-beca-704f67e6d46c"
           }
           ```
+      tags:
+        - Backup Policy
   '/dashboard/machines/{machine_id}/directories/action':
     parameters:
       - schema:
@@ -794,8 +842,10 @@ paths:
                   backup_directories:
                     - 3d08f398-47e8-417b-bf7d-47a62f00f2fa
                     - ad8d199f-c7e8-4ec7-b060-e813da36e32c
+      tags:
+        - BackupDirectory
     delete:
-      summary: Delete nhiều directories đồng thời
+      summary: Xóa nhiều directories đồng thời
       operationId: delete-dashboard-machines-machine_id-directories-action
       responses:
         '200':
@@ -810,18 +860,266 @@ paths:
             schema:
               type: object
               properties:
-                action:
-                  type: string
-                  description: delete
                 backup_directories:
                   type: array
                   description: List id backup-directories not empty
                   items:
                     type: string
                     format: uuid
+                keep:
+                  type: boolean
               required:
-                - action
                 - backup_directories
+                - keep
+      tags:
+        - BackupDirectory
+  '/dashboard/machines/{machine_id}/action':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+    post:
+      summary: Enable/disable machine
+      operationId: post-dashboard-machines-machine_id-action
+      responses:
+        '200':
+          description: OK
+      description: |-
+        Endpoint thực hiện enable/disable machine
+
+        - enable: enable lại tất cả directory của machine
+        - disable: disable tất cả directory của machine
+
+        Required request body action: enable/disable
+
+        ```
+        {
+          "action": "enable"
+        }
+        ```
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                ation:
+                  type: string
+                  enum:
+                    - enable
+                    - disable
+            examples:
+              enable:
+                value:
+                  action: enable
+              disable:
+                value:
+                  action: disable
+      tags:
+        - Machines
+  '/dashboard/machines/{machine_id}/reset-secret-key':
+    parameters:
+      - schema:
+          type: string
+        name: machine_id
+        in: path
+        required: true
+    post:
+      summary: Reset secret key for machine
+      operationId: post-dashboard-machines-machine_id-reset-secret-key
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/MachinePost.v1.yaml
+      description: ''
+      tags:
+        - Machines
+  /dashboard/recovery-points:
+    get:
+      summary: Lấy danh sách RecoveryPoint của tenant
+      tags:
+        - Recovery Point
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/RecoveryPoint.v1.yaml
+      operationId: get-dashboard-recovery-points
+      description: |-
+        Trả về 1 list các recovery point của tenant, chứa đầy đủ thông tin về backup-directory và machine
+
+        ```
+        [
+          {
+            "backup_directory": {
+              "activated": true,
+              "created_at": "2020-08-26T15:27:45.174584+07:00",
+              "deleted": true,
+              "description": null,
+              "id": "93f2ae07-b7ad-4fe7-8f8b-08d0831b73bd",
+              "machine": {
+                "agent_version": null,
+                "created_at": "2020-08-26T14:42:44.122828+07:00",
+                "deleted": true,
+                "encryption": false,
+                "host_name": null,
+                "id": "90f59741-060b-4381-8ad6-f56117f3d2ee",
+                "ip_address": null,
+                "name": null,
+                "os_machine_id": null,
+                "os_version": null,
+                "status": "OFFLINE",
+                "tenant_id": "97ef441a-3edf-4ab7-847a-7afe17964e8f",
+                "updated_at": "2020-09-10T16:50:31.635576+07:00"
+              },
+              "name": null,
+              "path": "var/as/henlib/dev/nginx",
+              "quota": null,
+              "size": 0,
+              "updated_at": "2020-09-10T16:50:31.594500+07:00"
+            },
+            "created_at": "2020-09-10T16:49:01.900761+07:00",
+            "id": "8df81afc-88ec-4960-9c40-944bb6f3ca65",
+            "name": "20/22/5",
+            "recovery_point_type": "INITIAL_REPLICA",
+            "status": "CREATED",
+            "updated_at": "2020-09-10T16:49:01.900761+07:00"
+          }
+        ]
+        ```
+  '/dashborad/machines/{machined_id}/recovery-points':
+    parameters:
+      - schema:
+          type: string
+        name: machined_id
+        in: path
+        required: true
+    get:
+      summary: Lấy danh sách RecoveryPoint của machine
+      tags:
+        - Recovery Point
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      operationId: get-dashborad-machines-machined_id-recovery-points
+      description: |-
+        Trả về 1 list các recovery point trong machine, chứa đầy đủ thông tin về backup-directory và machine
+
+        ```
+        [
+          {
+            "backup_directory": {
+              "activated": true,
+              "created_at": "2020-08-26T15:27:45.174584+07:00",
+              "deleted": true,
+              "description": null,
+              "id": "93f2ae07-b7ad-4fe7-8f8b-08d0831b73bd",
+              "machine": {
+                "agent_version": null,
+                "created_at": "2020-08-26T14:42:44.122828+07:00",
+                "deleted": true,
+                "encryption": false,
+                "host_name": null,
+                "id": "90f59741-060b-4381-8ad6-f56117f3d2ee",
+                "ip_address": null,
+                "name": null,
+                "os_machine_id": null,
+                "os_version": null,
+                "status": "OFFLINE",
+                "tenant_id": "97ef441a-3edf-4ab7-847a-7afe17964e8f",
+                "updated_at": "2020-09-10T16:50:31.635576+07:00"
+              },
+              "name": null,
+              "path": "var/as/henlib/dev/nginx",
+              "quota": null,
+              "size": 0,
+              "updated_at": "2020-09-10T16:50:31.594500+07:00"
+            },
+            "created_at": "2020-09-10T16:49:01.900761+07:00",
+            "id": "8df81afc-88ec-4960-9c40-944bb6f3ca65",
+            "name": "20/22/5",
+            "recovery_point_type": "INITIAL_REPLICA",
+            "status": "CREATED",
+            "updated_at": "2020-09-10T16:49:01.900761+07:00"
+          }
+        ]
+        ```
+  '/dashboard/recovery-ponits/{recovery_ponit_id}':
+    parameters:
+      - schema:
+          type: string
+        name: recovery_ponit_id
+        in: path
+        required: true
+    get:
+      summary: lấy thông tin chi tiết recovery point theo id
+      tags:
+        - Recovery Point
+      responses:
+        '200':
+          description: OK
+        '404':
+          description: Not Found
+      operationId: get-dashboard-recovery-ponits-recovery_ponit_id
+      description: |-
+        lấy thông tin chi tiết recovery point theo id
+
+        ```
+        {
+            "backup_directory": {
+              "activated": true,
+              "created_at": "2020-08-26T15:27:45.174584+07:00",
+              "deleted": true,
+              "description": null,
+              "id": "93f2ae07-b7ad-4fe7-8f8b-08d0831b73bd",
+              "machine": {
+                "agent_version": null,
+                "created_at": "2020-08-26T14:42:44.122828+07:00",
+                "deleted": true,
+                "encryption": false,
+                "host_name": null,
+                "id": "90f59741-060b-4381-8ad6-f56117f3d2ee",
+                "ip_address": null,
+                "name": null,
+                "os_machine_id": null,
+                "os_version": null,
+                "status": "OFFLINE",
+                "tenant_id": "97ef441a-3edf-4ab7-847a-7afe17964e8f",
+                "updated_at": "2020-09-10T16:50:31.635576+07:00"
+              },
+              "name": null,
+              "path": "var/as/henlib/dev/nginx",
+              "quota": null,
+              "size": 0,
+              "updated_at": "2020-09-10T16:50:31.594500+07:00"
+            },
+            "created_at": "2020-09-10T16:49:01.900761+07:00",
+            "id": "8df81afc-88ec-4960-9c40-944bb6f3ca65",
+            "name": "20/22/5",
+            "recovery_point_type": "INITIAL_REPLICA",
+            "status": "CREATED",
+            "updated_at": "2020-09-10T16:49:01.900761+07:00"
+        }
+        ```
+    delete:
+      summary: Xóa Recovery Point
+      operationId: delete-dashboard-recovery-ponits-recovery_ponit_id
+      responses:
+        '200':
+          description: OK
+      tags:
+        - Recovery Point
 components:
   schemas: {}
   securitySchemes:

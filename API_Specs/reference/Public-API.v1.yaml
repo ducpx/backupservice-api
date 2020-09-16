@@ -77,7 +77,7 @@ paths:
         in: path
         required: true
     get:
-      summary: Lấy danh sách Recovery Point
+      summary: Lấy danh sách Recovery Point trong directory
       tags:
         - Recovery Point
       responses:
@@ -138,14 +138,8 @@ paths:
             "policy_id": "6dd19ea8-a690-4fa0-8935-2b04f3c663ef"
           }
           ```
-  '/agent/backup-directories/{backupDirectoryId}/recovery-points/{recoveryPointId}':
+  '/agent/recovery-points/{recoveryPointId}':
     parameters:
-      - schema:
-          type: integer
-        name: backupDirectoryId
-        in: path
-        description: ''
-        required: true
       - schema:
           type: string
         name: recoveryPointId
@@ -483,10 +477,13 @@ paths:
             schema:
               $ref: ../models/MachineRequest.v1.yaml
         description: ''
+      tags:
+        - Machines
   /agent/config:
     get:
       summary: Get config cho machine
-      tags: []
+      tags:
+        - Machines
       responses:
         '200':
           description: OK
@@ -536,6 +533,8 @@ paths:
         '200':
           description: OK
       description: "Request body gồm có action: backup_manual và storage_type\n\nstorage_type: S3 hoặc TAPE\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n}\n```"
+      tags:
+        - BackupDirectory
   '/agent/backup-directories/{backupDirectoryId}/recovery-points/{recoveryPointId}/action':
     parameters:
       - schema:
@@ -563,6 +562,17 @@ paths:
             "path": "/path/to/directory"
         }
         ```
+      tags:
+        - Recovery Point
+  /agent/recovery-points:
+    get:
+      summary: Lấy danh sách Recovery Point trong machine
+      tags:
+        - Recovery Point
+      responses:
+        '200':
+          description: OK
+      operationId: get-agent-recovery-points
 components:
   schemas: {}
   securitySchemes:

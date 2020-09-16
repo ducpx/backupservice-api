@@ -9,5 +9,11 @@ properties:
     type: string
     example: /var/lib/mysql
     pattern: '^[A-Za-z0-9/._-]*$'
+  policies:
+    type: array
+    description: List policies to apply to backup directory
+    items:
+      type: string
+      format: uuid
 required:
   - path
