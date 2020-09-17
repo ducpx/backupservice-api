@@ -503,6 +503,8 @@ paths:
           name: upload_id
           required: true
           description: Multipart upload id
+      tags:
+        - File
 components:
   schemas: {}
   securitySchemes:
@@ -510,7 +512,10 @@ components:
       name: Authorization
       type: apiKey
       in: header
-      description: "Request phía client gửi thông tin xác thực trong Header Authorization có định dạng: \n\nAuthorization: VBS AccessKey:Signature"
+      description: |-
+        Request phía client gửi thông tin xác thực trong Header Authorization có định dạng: 
+
+        Authorization: VBS AccessKey:Signature
     Date:
       name: Date
       type: apiKey
@@ -519,3 +524,5 @@ components:
 security:
   - API Key: []
   - Date: []
+tags:
+  - name: File
