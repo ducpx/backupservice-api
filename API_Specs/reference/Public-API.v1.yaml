@@ -164,40 +164,7 @@ paths:
       operationId: get-recovery-points
       description: Lấy Recovery Point theo id
       parameters: []
-    patch:
-      summary: Cập nhật Recovery Point
-      operationId: patch-recovery-points-backupDirectoryId
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ../models/RecoveryPoint.v1.yaml
-        '400':
-          description: Bad Request
-        '404':
-          description: Not Found
-      description: 'Cập nhật đã hoàn tất Recovery Point (tức là đã backup xong), chuyển status sang COMPLETED. '
-      requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: ../models/RecoveryPoint.v1.yaml
-            examples:
-              example-1:
-                value:
-                  id: 110
-                  status: COMPLETED
-        description: |-
-          Truyền lại object với "status": "COMPLETED". Các trường khác sẽ không được xử lý, nếu "status" != "COMPLETED" sẽ không được chấp nhận.
-          {
-            "status": "COMPLETED"
-          }
-      parameters: []
-      tags:
-        - Recovery Point
-  /agent/files:
+  '/agent/recovery-points/{recovery-point-id}/file':
     post:
       summary: Upload file
       tags:
@@ -213,14 +180,7 @@ paths:
           description: Forbidden nếu Recovery Point Session Id không tồn tại hoặc không hợp lệ
       operationId: post-files
       description: Upload file qua multipart/form-data
-      parameters:
-        - schema:
-            type: string
-            format: uuid
-          in: header
-          name: X-Recovery-Point-Id
-          description: Recovery Point Session Id
-          required: true
+      parameters: []
       requestBody:
         content:
           multipart/form-data:
@@ -261,24 +221,17 @@ paths:
       parameters:
         - schema:
             type: string
-            format: uuid
-          in: header
-          name: X-Recovery-Point-Id
-          description: Recovery Point Session Id
-          required: true
-        - schema:
-            type: string
           in: query
           name: name
           description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup
-    parameters: []
-  '/agent/backup-directories/{backupDirectoryId}/recovery-points/{recoveryPointId}/files':
     parameters:
       - schema:
           type: string
-        name: backupDirectoryId
+        name: recovery-point-id
         in: path
         required: true
+  '/agent/recovery-points/{recoveryPointId}/list-files':
+    parameters:
       - schema:
           type: string
         name: recoveryPointId
@@ -301,7 +254,7 @@ paths:
           description: Not Found
       operationId: get-backup-directories-backupDirectoryId-recovery-points-recoveryPointId-files
       description: Liệt kê danh sách File đã được backup trong Recovery Point
-  /agent/files/download:
+  '/agent/recovery-points/{recovery-point-id}/file/download':
     get:
       summary: Download Files
       tags:
@@ -314,7 +267,10 @@ paths:
         '404':
           description: Not Found nếu file name không tồn tại
       operationId: get-files-download
-      description: Download file
+      description: |-
+        Download file
+
+        Khi restore, download cả recovery point dùng name={recovery-point-id}.zip
       parameters:
         - schema:
             type: string
@@ -322,13 +278,6 @@ paths:
           in: query
           name: name
           description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup. Hiện tại chỉ support download cả file zip của thư mục. Tên file recovery-point-id.zip
-          required: true
-        - schema:
-            type: string
-            format: uuid
-          in: header
-          name: X-Recovery-Point-Id
-          description: Recovery Point Session Id
           required: true
         - schema:
             type: string
@@ -340,129 +289,12 @@ paths:
           in: header
           name: X-Session-Created-At
           required: true
-    parameters: []
-  /agent/files/multipart:
-    post:
-      summary: Khởi tạo multipart session
-      tags:
-        - File
-      responses:
-        '200':
-          description: 'Response 200 khi request gửi kèm uploadId và các part được nối thành công, URL xem thông tin file trả trong header Location'
-          content:
-            application/json:
-              schema:
-                $ref: ../models/Multipart.v1.yaml
-          headers:
-            Location:
-              schema:
-                type: string
-              description: URL xem thông tin file hoàn chỉnh
-              required: true
-        '201':
-          description: Response 201 khi khởi tạo Multipart session (không gửi uploadId). URL để upload part trả trong header Location
-          content:
-            application/json:
-              schema:
-                $ref: ../models/Multipart.v1.yaml
-          headers:
-            Location:
-              schema:
-                type: string
-              description: URL để upload part. Các thao tác PUT part gửi vào đây
-              required: true
-      operationId: post-files-multipart
-      description: |-
-        Khởi tạo multipart session để bắt đầu upload các part.
-        Hoặc Kết thúc multipart để nối các part thành file hoàn chỉnh (gửi kèm param uploadId).
-      parameters:
-        - schema:
-            type: string
-            format: uuid
-          in: header
-          name: X-Recovery-Point-Id
-          description: Recovery Point Session Id
-          required: true
-        - schema:
-            type: string
-          in: query
-          name: upload_id
-          description: 'Multipart upload id, truyền thông tin này khi hoàn tất Multipart. Required khi complete upload multipart'
-    put:
-      summary: Upload part
-      tags:
-        - File
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ../models/Part.v1.yaml
-        '403':
-          description: Forbidden
-        '404':
-          description: Not Found
-      operationId: put-files-multipart
-      description: 'Upload part '
-      requestBody:
-        content:
-          multipart/form-data:
-            schema:
-              type: object
-              properties:
-                data:
-                  type: string
-              required:
-                - data
-      parameters:
-        - schema:
-            type: string
-            format: uuid
-          in: header
-          name: X-Recovery-Point-Id
-          description: Recovery Point Session Id
-          required: true
-        - schema:
-            type: string
-          in: query
-          name: upload_id
-          required: true
-          description: Multipart upload id
-        - schema:
-            type: integer
-          in: query
-          name: part_number
-          required: true
-          description: Thứ tự part sẽ được dùng khi nối các part thành file hoàn chỉnh
-    get:
-      summary: Đọc thông tin multipart session
-      tags:
-        - File
-      responses:
-        '200':
-          description: OK
-          content:
-            application/json:
-              schema:
-                $ref: ../models/Multipart.v1.yaml
-      operationId: get-files-multipart
-      description: Lấy thông tin Multipart session và các Part đã upload
-      parameters:
-        - schema:
-            type: string
-            format: uuid
-          in: header
-          name: X-Recovery-Point-Id
-          description: Recovery Point Session Id
-          required: true
-        - schema:
-            type: string
-          in: query
-          name: upload_id
-          required: true
-          description: Multipart upload id
-    parameters: []
+    parameters:
+      - schema:
+          type: string
+        name: recovery-point-id
+        in: path
+        required: true
   /agent/register:
     patch:
       summary: Update thông tin machine khi start
@@ -573,6 +405,104 @@ paths:
         '200':
           description: OK
       operationId: get-agent-recovery-points
+  '/agent/recovery-points/{recovery_point_id}/file/multipart/init':
+    parameters:
+      - schema:
+          type: string
+        name: recovery_point_id
+        in: path
+        required: true
+    post:
+      summary: Khởi tạo multipart session
+      operationId: post-agent-recovery-points-recovery_point_id-file-multipart-init
+      responses:
+        '201':
+          description: Created
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Multipart.v1.yaml
+      tags:
+        - File
+      description: |-
+        Khởi tạo multipart session để bắt đầu upload các part.
+        Hoặc Kết thúc multipart để nối các part thành file hoàn chỉnh (gửi kèm param uploadId).
+  '/agent/recovery-points/{recovery_point_id}/file/multipart/put':
+    parameters:
+      - schema:
+          type: string
+        name: recovery_point_id
+        in: path
+        required: true
+    get:
+      summary: Đọc thông tin multipart session
+      tags:
+        - File
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/Part.v1.yaml
+      operationId: get-agent-recovery-points-recovery_point_id-file-multipart-put
+      description: Lấy thông tin Multipart session và các Part đã upload
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: upload_id
+          required: true
+          description: Multipart upload id
+    put:
+      summary: Upload part
+      operationId: put-agent-recovery-points-recovery_point_id-file-multipart-put
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                $ref: ../models/Part.v1.yaml
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: upload_id
+          required: true
+          description: Multipart upload id
+        - schema:
+            type: string
+          in: query
+          name: part_number
+          required: true
+          description: Thứ tự part sẽ được dùng khi nối các part thành file hoàn chỉnh
+      description: Upload part
+      tags:
+        - File
+  '/agent/recovery-points/{recovery_point_id}/file/multipart/complete':
+    parameters:
+      - schema:
+          type: string
+        name: recovery_point_id
+        in: path
+        required: true
+    post:
+      summary: Complete session upload multipart
+      operationId: post-agent-recovery-points-recovery_point_id-file-multipart-complete
+      responses:
+        '200':
+          description: OK
+      description: Hoặc Kết thúc multipart để nối các part thành file hoàn chỉnh
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: upload_id
+          required: true
+          description: Multipart upload id
 components:
   schemas: {}
   securitySchemes:

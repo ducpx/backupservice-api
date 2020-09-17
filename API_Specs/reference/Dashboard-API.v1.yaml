@@ -640,18 +640,8 @@ paths:
                 items:
                   $ref: ../models/RecoveryPoint.v1.yaml
       operationId: get-machines-machine_id-directories-backup_directory_id-recovery-points
-  '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/recovery-points/{recovery-point-id}/files':
+  '/dashboard/recovery-points/{recovery-point-id}/files':
     parameters:
-      - schema:
-          type: string
-        name: machine_id
-        in: path
-        required: true
-      - schema:
-          type: string
-        name: backup_directory_id
-        in: path
-        required: true
       - schema:
           type: string
         name: recovery-point-id
@@ -671,6 +661,7 @@ paths:
                 items:
                   $ref: ../models/File.v1.yaml
       operationId: get-machines-machine_id-directories-backup_directory_id-recovery-points-recovery-point-id-files
+      description: ''
   '/dashboard/machines/{machine_id}/directories/{backup_directory_id}/action':
     parameters:
       - schema:
