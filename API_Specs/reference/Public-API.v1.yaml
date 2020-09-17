@@ -503,6 +503,8 @@ paths:
           name: upload_id
           required: true
           description: Multipart upload id
+      tags:
+        - File
 components:
   schemas: {}
   securitySchemes:
