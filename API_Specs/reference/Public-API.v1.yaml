@@ -364,7 +364,7 @@ paths:
       responses:
         '200':
           description: OK
-      description: "Request body gồm có action: backup_manual và storage_type\n\nstorage_type: S3 hoặc TAPE\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n}\n```"
+      description: "Request body gồm có action: backup_manual, name và storage_type\n\nstorage_type: S3 hoặc TAPE\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n\t\"name\": <name-recovery-point-for-backup-manual>\n}\n```"
       tags:
         - BackupDirectory
   '/agent/backup-directories/{backupDirectoryId}/recovery-points/{recoveryPointId}/action':
@@ -512,7 +512,10 @@ components:
       name: Authorization
       type: apiKey
       in: header
-      description: "Request phía client gửi thông tin xác thực trong Header Authorization có định dạng: \n\nAuthorization: VBS AccessKey:Signature"
+      description: |-
+        Request phía client gửi thông tin xác thực trong Header Authorization có định dạng: 
+
+        Authorization: VBS AccessKey:Signature
     Date:
       name: Date
       type: apiKey
@@ -521,3 +524,5 @@ components:
 security:
   - API Key: []
   - Date: []
+tags:
+  - name: File

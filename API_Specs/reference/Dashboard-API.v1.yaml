@@ -690,7 +690,7 @@ paths:
             schema:
               type: object
               properties: {}
-        description: "Request body gồm có action\ncác action bao gồm:\n- active\n- deactive\n\n```\n{\n\t\"action\": \"deactive\",\n}\n```\n\n- backup_manual: Backup manual phai co them storage_type\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\"\n}\n```\n"
+        description: "Request body gồm có action\ncác action bao gồm:\n- active\n- deactive\n\n```\n{\n\t\"action\": \"deactive\",\n}\n```\n\n- backup_manual: Backup manual phai co them storage_type\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n\t\"name\": <name-recovery-point-for-backup-manual>\n}\n```\n"
       tags:
         - BackupDirectory
   '/dashboard/recovery-points/{recovery-point-id}/action':
