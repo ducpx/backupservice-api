@@ -673,7 +673,7 @@ paths:
         in: path
         required: true
     post:
-      summary: active/deactive backup directory
+      summary: active/deactive/backup_manual backup directory
       operationId: post-dashboard-machines-machine_id-directories-backup_directory_id-action
       responses:
         '200':
