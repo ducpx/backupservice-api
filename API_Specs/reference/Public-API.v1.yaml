@@ -109,16 +109,7 @@ paths:
           description: Unauthorized
         '404':
           description: Not Found
-      parameters:
-        - schema:
-            type: string
-            enum:
-              - INITIAL_REPLICA
-              - RECOVERY_POINT
-            example: RECOVERY_POINT
-          in: query
-          name: recovery-point-type
-          required: true
+      parameters: []
       tags:
         - Recovery Point
       requestBody:
@@ -126,14 +117,29 @@ paths:
           application/json:
             schema:
               type: object
-              properties: {}
+              properties:
+                name:
+                  type: string
+                policy_id:
+                  type: string
+                recovery_point_type:
+                  type: string
+                  enum:
+                    - INITIAL_REPLICA
+                    - RECOVERY_POINT
+                  description: 'Phase 1 mới chỉ support được full backup, nên type sẽ là INITIAL_REPLICA'
+              required:
+                - name
+                - policy_id
+                - recovery_point_type
         description: |
-          Require: policy_id, name
+          Require: policy_id, name, recovery_point_type
 
           ```
           {
             "name": "2020-15-07",
-            "policy_id": "6dd19ea8-a690-4fa0-8935-2b04f3c663ef"
+            "policy_id": "6dd19ea8-a690-4fa0-8935-2b04f3c663ef",
+            "recovery_point_type": "INITIAL_REPLICA"
           }
           ```
   '/agent/recovery-points/{recoveryPointId}':
