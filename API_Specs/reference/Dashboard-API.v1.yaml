@@ -547,8 +547,6 @@ paths:
           - name
           - schedule_pattern
           - retention_days
-          - retention_weeks
-          - retention_months
 
           ```
           {
