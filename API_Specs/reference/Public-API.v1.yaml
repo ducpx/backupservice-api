@@ -371,7 +371,7 @@ paths:
       description: "Request body gồm có action: backup_manual, name và storage_type\n\nstorage_type: S3 hoặc TAPE\n\n```\n{\n\t\"action\": \"backup_manual\",\n\t\"storage_type\": \"S3\",\n\t\"name\": <name-recovery-point-for-backup-manual>\n}\n```"
       tags:
         - BackupDirectory
-  '/agent/backup-directories/{backupDirectoryId}/recovery-points/{recoveryPointId}/action':
+  '/agent/recovery-points/{recoveryPointId}/action':
     parameters:
       - schema:
           type: string
