@@ -128,9 +128,7 @@ paths:
               type: object
               properties: {}
         description: |
-          Require policy_id
-
-          Option: name
+          Require: policy_id, name
 
           ```
           {
