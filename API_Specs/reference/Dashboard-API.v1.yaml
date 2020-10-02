@@ -1109,6 +1109,84 @@ paths:
           description: OK
       tags:
         - Recovery Point
+  /dashboard/activity:
+    get:
+      summary: Lấy danh sách lịch sử thao tác của user và agent
+      tags:
+        - activity
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  id:
+                    type: string
+                  created_at:
+                    type: string
+                  updated_at:
+                    type: string
+                  tenant_id:
+                    type: string
+                  user_id:
+                    type: string
+                    description: 'user_id là người thực hiện hành động, nếu null là do worker của hệ thống thực hiện'
+                  action:
+                    type: string
+                  status:
+                    type: string
+                  message:
+                    type: string
+                  extra:
+                    type: string
+                  machine_id:
+                    type: string
+                  backup_directory_id:
+                    type: string
+                  policy_id:
+                    type: string
+                  recovery_point_id:
+                    type: string
+      operationId: get-dashboard-activity
+      description: |-
+        Danh sách các hành động:
+
+            # Machine
+            CREATE_MACHINE
+            DELETE_MACHINE
+            ENABLE_MACHINE
+            DISABLE_MACHINE
+            RESET_SECRET_KEY
+
+            # BackupDirectory
+            CREATE_BACKUP_DIRECTORY
+            UPDATE_POLICY_BACKUP_DIRECTORY
+            ENABLE_BACKUP_DIRECTORY
+            ENABLE_MULTIPLE_BACKUP_DIRECTORY
+            DISABLE_BACKUP_DIRECTORY
+            DISABLE_MULTIPLE_BACKUP_DIRECTORY
+            DELETE_BACKUP_DIRECTORY
+            DELETE_MULTIPLE_BACKUP_DIRECTORY
+
+            # Policy
+            CREATE_POLICY
+            DELETE_POLICY
+            UPDATE_POLICY
+            APPLY_POLICY
+            UNAPPLY_POLICY
+
+            # RecoveryPoint
+            DELETE_RECOVERY_POINT
+
+            AGENT_REQUEST_BACKUP
+            DASHBOARD_REQUEST_BACKUP
+
+            BACKUP_MANUAL
+            BACKUP_AUTO
+
+            RESTORE
 components:
   schemas: {}
   securitySchemes:
@@ -1125,3 +1203,5 @@ components:
 security:
   - X-Auth-Token: []
   - X-Tenant-Name: []
+tags:
+  - name: activity
