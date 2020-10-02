@@ -460,6 +460,16 @@ paths:
           name: upload_id
           required: true
           description: Multipart upload id
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties: {}
+          application/octet-stream:
+            schema:
+              type: object
+              properties: {}
     put:
       summary: Upload part
       operationId: put-agent-recovery-points-recovery_point_id-file-multipart-put
@@ -486,6 +496,25 @@ paths:
       description: Upload part
       tags:
         - File
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+              required:
+                - data
+          multipart/form-data:
+            schema:
+              type: object
+              properties:
+                data:
+                  type: string
+              required:
+                - data
+        description: Dữ liệu file gửi qua multipart/form-data
   '/agent/recovery-points/{recovery_point_id}/file/multipart/complete':
     parameters:
       - schema:
