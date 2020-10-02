@@ -492,7 +492,7 @@ paths:
           in: query
           name: part_number
           required: true
-          description: Thứ tự part sẽ được dùng khi nối các part thành file hoàn chỉnh
+          description: Thứ tự part sẽ được dùng khi nối các part thành file hoàn chỉnh. part_number bắt đầu từ 1
       description: Upload part
       tags:
         - File
