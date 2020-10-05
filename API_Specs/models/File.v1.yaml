@@ -1,9 +1,10 @@
 title: File
 type: object
+description: ''
 properties:
   id:
-    type: integer
-  name:
+    type: string
+  item_name:
     type: string
   size:
     type: integer
@@ -17,4 +18,11 @@ properties:
     type: string
   eTag:
     type: string
-description: ''
+  item_type:
+    type: string
+  last_modified:
+    type: string
+  mode:
+    type: string
+  status:
+    type: string

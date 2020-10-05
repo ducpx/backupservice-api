@@ -1187,6 +1187,37 @@ paths:
             BACKUP_AUTO
 
             RESTORE
+  '/dashboard/recovery-points/{recovery-point-id}/items':
+    parameters:
+      - schema:
+          type: string
+        name: recovery-point-id
+        in: path
+        required: true
+    get:
+      summary: Lấy danh sách các items trong một recovery point
+      tags:
+        - Recovery Point
+      responses:
+        '200':
+          description: OK
+          content:
+            application/json:
+              schema:
+                type: array
+                items:
+                  $ref: ../models/File.v1.yaml
+      operationId: get-dashboard-recovery-points-recovery-point-id-items
+      description: |-
+        Lấy toàn bộ items trong một recovery point trả về một list
+
+        thêm query param name để lấy danh sách item trong thư mục
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: name
+          description: relative path directory
 components:
   schemas: {}
   securitySchemes:
@@ -1205,3 +1236,4 @@ security:
   - X-Tenant-Name: []
 tags:
   - name: activity
+  - name: Recovery Point
