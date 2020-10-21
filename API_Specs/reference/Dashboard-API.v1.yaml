@@ -45,6 +45,12 @@ paths:
       operationId: get all machines
       tags:
         - Machines
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: include_deleted=true
+          description: Thêm query param include_deleted=true để lấy danh sách tất cả các machine bao gồm đã xóa nhưng vẫn còn RP
     post:
       summary: Tạo mới một Machine
       operationId: post-machines
@@ -985,6 +991,27 @@ paths:
           }
         ]
         ```
+    delete:
+      summary: Xóa nhiều RecoveryPoint đồng thời
+      operationId: delete-dashboard-recovery-points
+      responses:
+        '200':
+          description: OK
+      description: "request body:\n\n```\n{\n\t\"recovery_point_ids\": [\n\t\t<recovery-point-id>\n\t]\n}\n```"
+      tags:
+        - Recovery Point
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                recovery_point_ids:
+                  type: array
+                  minItems: 1
+                  items:
+                    type: string
+                    format: uuid
   '/dashborad/machines/{machined_id}/recovery-points':
     parameters:
       - schema:
