@@ -1180,41 +1180,44 @@ paths:
       description: |-
         Danh sách các hành động:
 
-              
-          # Machine
-          CREATE_MACHINE
-          DELETE_MACHINE
-          ENABLE_MACHINE
-          DISABLE_MACHINE
-          RESET_SECRET_KEY
-          
-          # BackupDirectory
-          CREATE_BACKUP_DIRECTORY
-          UPDATE_POLICY_BACKUP_DIRECTORY
-          ENABLE_BACKUP_DIRECTORY
-          ENABLE_MULTIPLE_BACKUP_DIRECTORY
-          DISABLE_BACKUP_DIRECTORY
-          DISABLE_MULTIPLE_BACKUP_DIRECTORY
-          DELETE_BACKUP_DIRECTORY
-          DELETE_MULTIPLE_BACKUP_DIRECTORY
-          
-          # Policy
-          CREATE_POLICY
-          DELETE_POLICY
-          UPDATE_POLICY
-          APPLY_POLICY 
-          UNAPPLY_POLICY
-          
-          # RecoveryPoint
-          DELETE_RECOVERY_POINT
-          DELETE_MULTIPLE_RECOVERY_POINT
-          AGENT_REQUEST_BACKUP
-          DASHBOARD_REQUEST_BACKUP
-          BACKUP_MANUAL
-          BACKUP_AUTO
-          AGENT_REQUEST_RESTORE 
-          DASHBOARD_REQUEST_RESTORE
-          RESTORE
+            # Machine
+            CREATE_MACHINE
+            DELETE_MACHINE
+            ENABLE_MACHINE
+            DISABLE_MACHINE
+            RESET_SECRET_KEY
+
+            # BackupDirectory
+            CREATE_BACKUP_DIRECTORY
+            UPDATE_POLICY_BACKUP_DIRECTORY
+            ENABLE_BACKUP_DIRECTORY
+            ENABLE_MULTIPLE_BACKUP_DIRECTORY
+            DISABLE_BACKUP_DIRECTORY
+            DISABLE_MULTIPLE_BACKUP_DIRECTORY
+            DELETE_BACKUP_DIRECTORY
+            DELETE_MULTIPLE_BACKUP_DIRECTORY
+
+            # Policy
+            CREATE_POLICY
+            DELETE_POLICY
+            UPDATE_POLICY
+            APPLY_POLICY
+            UNAPPLY_POLICY
+            
+            # RecoveryPoint
+            DELETE_MULTIPLE_RECOVERY_POINT    
+            DELETE_RECOVERY_POINT
+            
+            AGENT_REQUEST_BACKUP
+            DASHBOARD_REQUEST_BACKUP
+            
+            DASHBOARD_REQUEST_RESTORE
+            AGENT_REQUEST_RESTORE
+            
+            BACKUP_MANUAL
+            BACKUP_AUTO
+            
+            RESTORE
   '/dashboard/recovery-points/{recovery-point-id}/items':
     parameters:
       - schema:
