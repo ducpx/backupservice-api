@@ -1245,6 +1245,36 @@ paths:
           in: query
           name: name
           description: relative path directory
+  '/dashboard/recovery-points/{recovery-point-id}/file/download':
+    parameters:
+      - schema:
+          type: string
+        name: recovery-point-id
+        in: path
+        required: true
+    get:
+      summary: Download Files
+      tags: []
+      responses:
+        '200':
+          description: OK
+          content:
+            application/zip:
+              schema:
+                type: object
+                properties: {}
+      operationId: get-dashboard-recovery-points-recovery-point-id-file-download
+      description: |-
+        Download file backup
+
+        Khi restore, download cả recovery point dùng name={recovery-point-id}.zip
+      parameters:
+        - schema:
+            type: string
+          in: query
+          name: name
+          description: File name. Đường dẫn tương đối tính từ thư mục dữ liệu cần backup. Hiện tại chỉ support download cả file zip của thư mục. Tên file recovery-point-id.zip
+          required: true
 components:
   schemas: {}
   securitySchemes:
