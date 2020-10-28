@@ -1258,7 +1258,8 @@ paths:
         required: true
     get:
       summary: Download Files
-      tags: []
+      tags:
+        - Recovery Point
       responses:
         '200':
           description: OK
